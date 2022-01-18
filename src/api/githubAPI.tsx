@@ -1,6 +1,6 @@
-import parseLink, { Links } from 'parse-link-header'
 import { ajax } from 'rxjs/ajax'
-import { map } from 'rxjs/operators'
+import parseLink, { Links } from 'parse-link-header'
+import { map, pluck } from 'rxjs/operators'
 import { Observable } from 'rxjs'
 
 export interface Label {
@@ -72,15 +72,15 @@ export function getIssues(
   page = 1
 ): Observable<IssuesResult> {
   const url = `https://api.github.com/repos/${org}/${repo}/issues?per_page=25&page=${page}`
-
   return ajax.get(url).pipe(
     map((r) => {
       let pageCount = 0
       const pageLinks = parseLink(r.xhr.getResponseHeader('link') as string)
 
-      if (pageLinks != null) {
+      if (pageLinks !== null) {
         pageCount = getPageCount(pageLinks)
       }
+
       return {
         pageLinks,
         pageCount,
@@ -90,17 +90,13 @@ export function getIssues(
   )
 }
 
-export function getRepoDetails(org: string, repo: string) {
+export function getRepoOpenIssuesCount(org: string, repo: string) {
   const url = `https://api.github.com/repos/${org}/${repo}`
-
-  return ajax
-    .getJSON<RepoDetails>(url)
-    .pipe(map((repoDetails) => repoDetails.open_issues_count))
+  return ajax.getJSON<RepoDetails>(url).pipe(pluck('open_issues_count'))
 }
 
 export function getIssue(org: string, repo: string, number: number) {
   const url = `https://api.github.com/repos/${org}/${repo}/issues/${number}`
-
   return ajax.getJSON<Issue>(url)
 }
 

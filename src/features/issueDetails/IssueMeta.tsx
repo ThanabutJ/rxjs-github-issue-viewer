@@ -35,4 +35,3 @@ export const IssueMeta = ({ issue }: IssueProps) => {
     </div>
   )
 }
-

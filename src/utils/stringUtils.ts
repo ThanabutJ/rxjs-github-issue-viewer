@@ -32,4 +32,3 @@ export function shorten(text = '', maxLength = 140) {
 
   return oneTooLarge.substr(0, 140) + ellip
 }
-

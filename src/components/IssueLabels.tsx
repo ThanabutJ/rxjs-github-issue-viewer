@@ -24,4 +24,3 @@ export const IssueLabels = ({ labels, className }: IssueLabelsProps) => (
     ))}
   </div>
 )
-

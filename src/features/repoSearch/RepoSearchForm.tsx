@@ -1,7 +1,14 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState, ChangeEvent, useEffect } from 'react'
 
 import './pure-forms.css'
 import './pure-buttons.css'
+import {
+  INITIAL_ORG,
+  INITIAL_REPO,
+  onLoadRepo,
+  onPageChange,
+  useCurrentPage,
+} from 'state'
 
 interface Props {
   org: string
@@ -13,15 +20,14 @@ interface Props {
 type InputEvent = ChangeEvent<HTMLInputElement>
 type ChangeHandler = (e: InputEvent) => void
 
-export const RepoSearchForm = ({
-  org,
-  repo,
-  setOrgAndRepo,
-  setJumpToPage,
-}: Props) => {
-  const [currentOrg, setCurrentOrg] = useState(org)
-  const [currentRepo, setCurrentRepo] = useState(repo)
-  const [currentPageText, setCurrentPageText] = useState('1')
+export const RepoSearchForm: React.FC = () => {
+  const [currentOrg, setCurrentOrg] = useState(INITIAL_ORG)
+  const [currentRepo, setCurrentRepo] = useState(INITIAL_REPO)
+  const page = useCurrentPage()
+  const [currentPageText, setCurrentPageText] = useState(
+    (page as number).toString()
+  )
+  useEffect(() => setCurrentPageText((page as number).toString()), [page])
 
   const onOrgChanged: ChangeHandler = (e) => {
     setCurrentOrg(e.target.value)
@@ -36,14 +42,14 @@ export const RepoSearchForm = ({
   }
 
   const onLoadRepoClicked = () => {
-    setOrgAndRepo(currentOrg, currentRepo)
+    onLoadRepo(currentOrg, currentRepo)
   }
 
   const onJumpToPageClicked = () => {
     const newPage = parseInt(currentPageText)
 
     if (newPage >= 1) {
-      setJumpToPage(newPage)
+      onPageChange(newPage)
     }
   }
 
@@ -88,4 +94,3 @@ export const RepoSearchForm = ({
     </form>
   )
 }
-

@@ -42,4 +42,3 @@ export const UserWithAvatar = ({
     return <span className={linkClassnames}>{contents}</span>
   }
 }
-
